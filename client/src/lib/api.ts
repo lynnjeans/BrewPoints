@@ -25,13 +25,18 @@ export async function apiGet<T>(path: string, token: string): Promise<T> {
   return (await res.json()) as T
 }
 
-export async function apiPost<T>(path: string, token: string, body: unknown): Promise<T> {
+async function apiSend<T>(
+  method: 'POST' | 'PATCH' | 'DELETE',
+  path: string,
+  token: string,
+  body?: unknown,
+): Promise<T> {
   let res: Response
   try {
     res = await fetch(path, {
-      method: 'POST',
+      method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(body),
+      body: body === undefined ? undefined : JSON.stringify(body),
     })
   } catch {
     throw new ApiError(0, 'Network error')
@@ -39,4 +44,16 @@ export async function apiPost<T>(path: string, token: string, body: unknown): Pr
   const data = (await res.json().catch(() => ({}))) as T & { error?: string }
   if (!res.ok) throw new ApiError(res.status, data.error ?? `Request failed: ${res.status}`)
   return data
+}
+
+export function apiPost<T>(path: string, token: string, body: unknown): Promise<T> {
+  return apiSend<T>('POST', path, token, body)
+}
+
+export function apiPatch<T>(path: string, token: string, body: unknown): Promise<T> {
+  return apiSend<T>('PATCH', path, token, body)
+}
+
+export function apiDelete<T>(path: string, token: string, body?: unknown): Promise<T> {
+  return apiSend<T>('DELETE', path, token, body)
 }

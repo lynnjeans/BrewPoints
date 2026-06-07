@@ -91,6 +91,7 @@
 |---|---|---|
 | ~~**Git 初始化**~~ | ✅ 已 init 并推送到 github.com/lynnjeans/BrewPoints(main) | — |
 | ~~**Web 推送通知**~~ | ✅ 已实现(Task 05):VAPID + `PushSubscription` 集合 + 订阅/退订/测试接口 + SW 推送处理 + Profile 开关;加章/兑换自动推送。见 `server/PUSH.md` | — |
+| ~~**CRUD 补全**~~ | ✅ 两个全 CRUD 功能:① 客户账户(注册/查看/`PATCH /api/me` 改资料/`DELETE /api/me` 删号级联);② 店长管理店员(增/查/改/删,防删自己与最后一个 manager)。积分账本按 R2 保持 append-only。见 `server/API.md` | — |
 | **部署改造** | Express 托管前端构建 + SPA fallback + 生产脚本 + Dockerfile + DEPLOY.md → DigitalOcean | — |
 | **宽屏/桌面布局** | 手机端已 OK;桌面响应式由产品方"再想想",暂缓 | 待决策 |
 | **html5-qrcode 代码分割** | 把扫码库从主包拆出(约 630KiB),优化首屏 | — |

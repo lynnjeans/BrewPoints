@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useStaffAuth } from './staff-auth-context'
+import { StaffManager } from './StaffManager'
 import { apiGet } from '../lib/api'
 
 interface NamedRef {
@@ -167,6 +168,8 @@ export function ManagerPage() {
               </Section>
             </>
           )}
+
+          <StaffManager token={session.token} currentStaffId={session.staff.staffId} />
         </div>
       </main>
     </div>

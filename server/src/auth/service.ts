@@ -1,5 +1,14 @@
 import { randomBytes } from 'node:crypto'
-import { Customer, Staff, nextId, type CustomerDoc, type StaffDoc } from '../db.js'
+import {
+  Customer,
+  PushSubscription,
+  Redemption,
+  Staff,
+  StampTransaction,
+  nextId,
+  type CustomerDoc,
+  type StaffDoc,
+} from '../db.js'
 import { AuthError } from './errors.js'
 import { hashPassword, verifyPassword } from './password.js'
 import { signToken } from './token.js'
@@ -143,6 +152,52 @@ export async function getCustomerById(customerId: number): Promise<PublicCustome
   const customer = await Customer.findOne({ customerId }).lean()
   if (!customer) throw new AuthError(404, 'Customer not found.')
   return toPublic(customer)
+}
+
+export interface UpdateCustomerInput {
+  name?: string
+  phone?: string | null
+}
+
+// CRUD "Update" for the account feature: a customer edits their own name / phone.
+// Email and auth provider are immutable (identity); balance is never editable here (R1/R2).
+export async function updateCustomer(
+  customerId: number,
+  input: UpdateCustomerInput,
+): Promise<PublicCustomer> {
+  const update: Partial<Pick<CustomerDoc, 'name' | 'phone'>> = {}
+
+  if (input.name !== undefined) {
+    const name = input.name.trim()
+    if (name === '') throw new AuthError(400, 'Name cannot be empty.')
+    update.name = name
+  }
+  if (input.phone !== undefined) {
+    const phone = input.phone === null ? null : input.phone.trim()
+    update.phone = phone === '' ? null : phone
+  }
+  if (Object.keys(update).length === 0) throw new AuthError(400, 'Nothing to update.')
+
+  const updated = await Customer.findOneAndUpdate(
+    { customerId },
+    { $set: update },
+    { new: true },
+  ).lean()
+  if (!updated) throw new AuthError(404, 'Customer not found.')
+  return toPublic(updated)
+}
+
+// CRUD "Delete" for the account feature: a customer deletes their own account and all data
+// (transactions, redemptions, push subscriptions). Right-to-erasure friendly.
+export async function deleteCustomer(customerId: number): Promise<void> {
+  const existing = await Customer.findOne({ customerId }).select('customerId').lean()
+  if (!existing) throw new AuthError(404, 'Customer not found.')
+  await Promise.all([
+    StampTransaction.deleteMany({ customerId }),
+    Redemption.deleteMany({ customerId }),
+    PushSubscription.deleteMany({ customerId }),
+  ])
+  await Customer.deleteOne({ customerId })
 }
 
 export async function getStaffById(staffId: number): Promise<PublicStaff> {
