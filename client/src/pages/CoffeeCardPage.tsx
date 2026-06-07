@@ -141,9 +141,11 @@ export function CoffeeCardPage() {
           ))}
       </section>
 
-      {updatedAt && (
+      {/* Data-freshness hint only matters offline (online auto-refreshes every 4s). It labels the
+          cached balance, not the QR — which is long-lived and never needs refreshing. */}
+      {!online && updatedAt && (
         <p className="mt-3 text-center text-[12px] text-bp-stone">
-          Updated {updatedAt.toLocaleTimeString('en-NZ', { hour: 'numeric', minute: '2-digit' })}
+          Balance updated {updatedAt.toLocaleTimeString('en-NZ', { hour: 'numeric', minute: '2-digit' })}
         </p>
       )}
     </AppShell>
