@@ -94,6 +94,7 @@
 | ~~**CRUD 补全**~~ | ✅ 两个全 CRUD 功能:① 客户账户(注册/查看/`PATCH /api/me` 改资料/`DELETE /api/me` 删号级联);② 店长管理店员(增/查/改/删,防删自己与最后一个 manager)。积分账本按 R2 保持 append-only。见 `server/API.md` | — |
 | ~~**日志/排错**~~ | ✅ pino 结构化日志 + pino-http 请求日志(密钥脱敏)+ 全局错误处理 + 404 JSON;`.vscode/launch.json` 调试配置 + `server/TROUBLESHOOTING.md`(根因分析、断点/watch 步骤)。见 Task 07 | — |
 | ~~**Cloud MongoDB**~~ | ✅ 已接 Atlas(AWS Sydney,3 节点副本集);`db.hello()` 证据已留作报告 bonus | — |
+| ~~**设计文档/报告**~~ | ✅ UML 类图+时序图+架构图(`design/diagrams/*.md`,Mermaid 可在 GitHub 渲染)、Persona、Storyboard;Word 报告骨架 `design/report/BrewPoints_Final_Report.docx`(已 schema 校验通过,本地文件不入库)。Figma 高保真线框由你完成 | Figma 待做 |
 | **部署改造** | Express 托管前端构建 + SPA fallback + 生产脚本 + Dockerfile + DEPLOY.md → DigitalOcean | — |
 | **宽屏/桌面布局** | 手机端已 OK;桌面响应式由产品方"再想想",暂缓 | 待决策 |
 | **html5-qrcode 代码分割** | 把扫码库从主包拆出(约 630KiB),优化首屏 | — |
