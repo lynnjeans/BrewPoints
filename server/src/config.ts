@@ -33,8 +33,12 @@ function positiveInt(name: string, fallback: number): number {
   return n
 }
 
+const nodeEnv = optional('NODE_ENV', 'development')
+
 const parsed = {
-  nodeEnv: optional('NODE_ENV', 'development'),
+  nodeEnv,
+  // Log verbosity (Task 07). Defaults: debug in dev, info in prod. Set LOG_LEVEL=silent in tests.
+  logLevel: optional('LOG_LEVEL', nodeEnv === 'production' ? 'info' : 'debug'),
   port: positiveInt('PORT', 3001),
   // MongoDB connection string. Local dev expects a single-node replica set (see DB_SETUP.md);
   // production points at MongoDB Atlas (a replica set by default) — required for transactions (R2).

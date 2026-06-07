@@ -79,7 +79,7 @@ staffRouter.post('/earn', async (req, res) => {
       res.status(err.statusCode).json({ error: err.message })
       return
     }
-    console.error(err)
+    req.log.error({ err }, 'staff route failed')
     res.status(500).json({ error: 'Something went wrong on our end.' })
   }
 })
@@ -101,7 +101,7 @@ staffRouter.post('/redeem', async (req, res) => {
       res.status(err.statusCode).json({ error: err.message })
       return
     }
-    console.error(err)
+    req.log.error({ err }, 'staff route failed')
     res.status(500).json({ error: 'Something went wrong on our end.' })
   }
 })

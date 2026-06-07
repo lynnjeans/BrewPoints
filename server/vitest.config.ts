@@ -5,6 +5,8 @@ export default defineConfig({
     environment: 'node',
     env: {
       JWT_SECRET: 'test-secret-not-for-production',
+      LOG_LEVEL: 'silent', // keep test output clean
+
       // MONGODB_URI is provided at runtime by global-setup (in-memory replica set) and is also
       // required by config.ts at import time, so we set a placeholder here; tests connect to the
       // real in-memory URI injected via setupFiles.

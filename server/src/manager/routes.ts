@@ -1,4 +1,4 @@
-import { Router, type Response } from 'express'
+import { Router, type Request, type Response } from 'express'
 import { AuthError } from '../auth/errors.js'
 import { getManagerOverview } from './service.js'
 import { createStaff, deleteStaff, listStaff, updateStaff } from './staff-admin.js'
@@ -6,32 +6,32 @@ import { createStaff, deleteStaff, listStaff, updateStaff } from './staff-admin.
 // Mounted at /api/manager behind authenticate + requireManager (see index.ts).
 export const managerRouter = Router()
 
-function handleError(err: unknown, res: Response): void {
+function handleError(err: unknown, req: Request, res: Response): void {
   if (err instanceof AuthError) {
     res.status(err.statusCode).json({ error: err.message })
     return
   }
-  console.error(err)
+  req.log.error({ err }, 'manager route failed')
   res.status(500).json({ error: 'Something went wrong on our end.' })
 }
 
 // Read-only store overview (PDR 5.3).
-managerRouter.get('/overview', async (_req, res) => {
+managerRouter.get('/overview', async (req, res) => {
   try {
     res.json(await getManagerOverview())
   } catch (err) {
-    handleError(err, res)
+    handleError(err, req, res)
   }
 })
 
 // --- Staff management CRUD (Task 03) ---
 
 // READ
-managerRouter.get('/staff', async (_req, res) => {
+managerRouter.get('/staff', async (req, res) => {
   try {
     res.json({ staff: await listStaff() })
   } catch (err) {
-    handleError(err, res)
+    handleError(err, req, res)
   }
 })
 
@@ -51,7 +51,7 @@ managerRouter.post('/staff', async (req, res) => {
     const staff = await createStaff({ name, email, role, password })
     res.status(201).json({ staff })
   } catch (err) {
-    handleError(err, res)
+    handleError(err, req, res)
   }
 })
 
@@ -89,7 +89,7 @@ managerRouter.patch('/staff/:staffId', async (req, res) => {
     const staff = await updateStaff(staffId, input)
     res.json({ staff })
   } catch (err) {
-    handleError(err, res)
+    handleError(err, req, res)
   }
 })
 
@@ -104,6 +104,6 @@ managerRouter.delete('/staff/:staffId', async (req, res) => {
     await deleteStaff(staffId, req.auth!.sub)
     res.json({ ok: true })
   } catch (err) {
-    handleError(err, res)
+    handleError(err, req, res)
   }
 })

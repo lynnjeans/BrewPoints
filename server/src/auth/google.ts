@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto'
 import { Router } from 'express'
 import { OAuth2Client } from 'google-auth-library'
 import { config } from '../config.js'
+import { logger } from '../logger.js'
 import { findOrCreateGoogleCustomer } from './service.js'
 
 // Google OAuth — standard authorization-code flow (PDR 15.2, Task 2.2).
@@ -85,7 +86,7 @@ googleRouter.get('/google/callback', async (req, res) => {
     const encoded = Buffer.from(JSON.stringify(result), 'utf8').toString('base64url')
     res.redirect(`${config.frontendUrl}/auth/callback#session=${encoded}`)
   } catch (err) {
-    console.error(err)
+    logger.error({ err }, 'Google OAuth callback failed')
     res.redirect(loginRedirect('google_failed'))
   }
 })

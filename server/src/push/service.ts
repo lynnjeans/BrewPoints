@@ -1,6 +1,7 @@
 import webpush from 'web-push'
 import { config } from '../config.js'
 import { PushSubscription } from '../db.js'
+import { logger } from '../logger.js'
 
 // Web Push (Task 05 — secure messaging). Payloads are encrypted end-to-end by the web-push
 // library using the subscription's own P-256 ECDH keys (p256dh/auth) and signed with our VAPID
@@ -12,7 +13,7 @@ let configured = false
 export function initPush(): boolean {
   const { publicKey, privateKey, subject } = config.vapid
   if (!publicKey || !privateKey) {
-    console.warn('Web Push disabled: VAPID keys not set. Run `npm run vapid:generate` and fill .env.')
+    logger.warn('Web Push disabled: VAPID keys not set. Run `npm run vapid:generate` and fill .env.')
     return false
   }
   webpush.setVapidDetails(subject, publicKey, privateKey)
@@ -71,7 +72,7 @@ export async function sendToCustomer(customerId: number, payload: PushPayload): 
         if (statusCode === 404 || statusCode === 410) {
           await PushSubscription.deleteOne({ endpoint: s.endpoint })
         } else {
-          console.error('Push send failed:', statusCode, (err as Error).message)
+          logger.error({ statusCode, msg: (err as Error).message }, 'Push send failed')
         }
       }
     }),
