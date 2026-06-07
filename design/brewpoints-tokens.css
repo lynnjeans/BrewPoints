@@ -1,0 +1,186 @@
+:root {
+  /* === Surfaces === */
+  --bp-paper:        #F5F1EA;
+  --bp-paper-warm:   #E8E2D5;
+  --bp-card:         #FFFFFF;
+  --bp-card-border:  #E0DAC9;
+  --bp-divider:      #F0EBE0;
+
+  /* === Ink === */
+  --bp-ink:          #1A1A1A;
+  --bp-ink-soft:     #2A2A2A;
+  --bp-stone:        #8A8580;
+  --bp-stone-light:  #D8D2C2;
+
+  /* === Accents === */
+  --bp-fern:         #2D5F4F;
+  --bp-fern-bright:  #5DCAA5;
+  --bp-clay:         #C44A1F;
+  --bp-clay-soft:    #FFEEE5;
+  --bp-alert:        #8A5A1A;  /* muted amber for form/auth errors — NOT clay, NOT red */
+
+  /* === Typography === */
+  --bp-font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bp-font-serif: Georgia, 'Times New Roman', serif;
+
+  /* === Radius === */
+  --bp-radius-pill:    100px;
+  --bp-radius-button:  14px;
+  --bp-radius-card-sm: 16px;
+  --bp-radius-card:    20px;
+  --bp-radius-phone:   24px;
+
+  /* === Tracking (letter-spacing) === */
+  --bp-tracking-label:  1.5px;
+  --bp-tracking-badge:  1.5px;
+  --bp-tracking-eyebrow: 2.5px;
+
+  /* === Semantic tokens (for components) === */
+  --bp-button-primary-bg:   var(--bp-ink);
+  --bp-button-primary-fg:   var(--bp-paper);
+  --bp-button-redeem-bg:    var(--bp-clay);
+  --bp-button-redeem-fg:    var(--bp-paper);
+  --bp-progress-filled:     var(--bp-fern);
+  --bp-progress-empty:      var(--bp-stone-light);
+  --bp-stamp-earned:        var(--bp-fern);
+  --bp-stamp-earned-full:   var(--bp-fern-bright);
+  --bp-stamp-pending:       var(--bp-stone-light);
+  --bp-history-earn:        var(--bp-fern);
+  --bp-history-redeem:      var(--bp-clay);
+}
+
+body {
+  font-family: var(--bp-font-sans);
+  background: var(--bp-paper);
+  color: var(--bp-ink);
+}
+
+.bp-num {
+  font-family: var(--bp-font-serif);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.bp-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: var(--bp-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--bp-stone);
+}
+
+.bp-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: var(--bp-tracking-label);
+  text-transform: uppercase;
+  color: var(--bp-stone);
+}
+
+.bp-badge {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: var(--bp-tracking-badge);
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: var(--bp-radius-pill);
+  display: inline-block;
+}
+.bp-badge--neutral {
+  background: var(--bp-paper);
+  color: var(--bp-ink);
+  border: 1px solid var(--bp-card-border);
+}
+.bp-badge--ink {
+  background: var(--bp-ink);
+  color: var(--bp-paper);
+}
+.bp-badge--clay {
+  background: var(--bp-clay);
+  color: var(--bp-paper);
+}
+
+.bp-card {
+  background: var(--bp-card);
+  border: 1px solid var(--bp-card-border);
+  border-radius: var(--bp-radius-card);
+  padding: 22px 20px;
+}
+.bp-card--ink {
+  background: var(--bp-ink);
+  color: var(--bp-paper);
+  border: none;
+}
+.bp-card--sm {
+  border-radius: var(--bp-radius-card-sm);
+}
+
+.bp-btn {
+  border: none;
+  padding: 16px;
+  border-radius: var(--bp-radius-button);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.bp-btn--primary {
+  background: var(--bp-button-primary-bg);
+  color: var(--bp-button-primary-fg);
+}
+.bp-btn--redeem {
+  background: var(--bp-button-redeem-bg);
+  color: var(--bp-button-redeem-fg);
+  padding: 18px;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+.bp-btn--secondary {
+  background: transparent;
+  color: var(--bp-ink);
+  border: 1px solid var(--bp-ink);
+  padding: 14px;
+}
+.bp-btn--ghost {
+  background: transparent;
+  color: var(--bp-stone);
+  border: none;
+  font-size: 13px;
+  padding: 10px;
+  width: auto;
+}
+
+.bp-input {
+  background: var(--bp-card);
+  border: 1px solid var(--bp-card-border);
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-size: 14px;
+  color: var(--bp-ink);
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bp-input::placeholder {
+  color: var(--bp-stone);
+}
+
+.bp-progress {
+  display: flex;
+  gap: 5px;
+}
+.bp-progress__seg {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bp-progress-empty);
+}
+.bp-progress__seg--filled {
+  background: var(--bp-progress-filled);
+}

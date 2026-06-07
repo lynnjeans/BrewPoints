@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <title>BrewPoints — Small size mark</title>
+  <desc>Optimised for ≤40px: thicker stroke, no bean centre line, for favicon / status bar / notifications.</desc>
+  <rect width="40" height="40" rx="9" fill="#1A1A1A"/>
+  <g transform="translate(20,20)">
+    <path d="M 0,-13 Q 11,-13 14,0 Q 14,11 3,13 Q -7,13 -7,5 Q -7,-1 -1,-2 Q 3,-2 3,3"
+          fill="none" stroke="#F5F1EA" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="3" cy="3" r="2.5" fill="#F5F1EA"/>
+  </g>
+</svg>
