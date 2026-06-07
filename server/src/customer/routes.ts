@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, type Request, type Response } from 'express'
 import { AuthError } from '../auth/errors.js'
 import { deleteCustomer, getCustomerById, updateCustomer } from '../auth/service.js'
 import { getRedemptions, getTransactions } from '../loyalty/history.js'
@@ -8,13 +8,24 @@ import { getRedemptions, getTransactions } from '../loyalty/history.js'
 // customer can never request someone else's history. These are read-only (cacheable in Task 7.1).
 export const customerRouter = Router()
 
+// Map a thrown error to a response: typed AuthError → its status; anything else → logged 500.
+// (A common cause of a 404 here is a stale token whose customerId no longer exists in the DB.)
+function handleError(err: unknown, req: Request, res: Response): void {
+  if (err instanceof AuthError) {
+    res.status(err.statusCode).json({ error: err.message })
+    return
+  }
+  req.log.error({ err }, 'customer route failed')
+  res.status(500).json({ error: 'Something went wrong on our end.' })
+}
+
 // Current profile + balance snapshot (used by the coffee card, Task 5.2).
 customerRouter.get('/', async (req, res) => {
   try {
     const customer = await getCustomerById(req.auth!.sub)
     res.json({ customer })
-  } catch {
-    res.status(500).json({ error: 'Something went wrong on our end.' })
+  } catch (err) {
+    handleError(err, req, res)
   }
 })
 
@@ -40,11 +51,7 @@ customerRouter.patch('/', async (req, res) => {
     const customer = await updateCustomer(req.auth!.sub, input)
     res.json({ customer })
   } catch (err) {
-    if (err instanceof AuthError) {
-      res.status(err.statusCode).json({ error: err.message })
-      return
-    }
-    res.status(500).json({ error: 'Something went wrong on our end.' })
+    handleError(err, req, res)
   }
 })
 
@@ -54,11 +61,7 @@ customerRouter.delete('/', async (req, res) => {
     await deleteCustomer(req.auth!.sub)
     res.json({ ok: true })
   } catch (err) {
-    if (err instanceof AuthError) {
-      res.status(err.statusCode).json({ error: err.message })
-      return
-    }
-    res.status(500).json({ error: 'Something went wrong on our end.' })
+    handleError(err, req, res)
   }
 })
 
@@ -66,8 +69,8 @@ customerRouter.get('/transactions', async (req, res) => {
   try {
     const transactions = await getTransactions(req.auth!.sub)
     res.json({ transactions })
-  } catch {
-    res.status(500).json({ error: 'Something went wrong on our end.' })
+  } catch (err) {
+    handleError(err, req, res)
   }
 })
 
@@ -75,7 +78,7 @@ customerRouter.get('/redemptions', async (req, res) => {
   try {
     const redemptions = await getRedemptions(req.auth!.sub)
     res.json({ redemptions })
-  } catch {
-    res.status(500).json({ error: 'Something went wrong on our end.' })
+  } catch (err) {
+    handleError(err, req, res)
   }
 })
