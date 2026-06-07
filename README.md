@@ -5,8 +5,7 @@ staff scan it to add stamps, and a full card (10 stamps) redeems one free coffee
 
 This is the implementation. The **authoritative spec is
 [`design/BrewPoints_Dev_Plan.md`](./design/BrewPoints_Dev_Plan.md)**; current progress is tracked in
-[`design/PROJECT_STATUS.md`](./design/PROJECT_STATUS.md); working rules are in
-[`CLAUDE.md`](./CLAUDE.md).
+[`design/PROJECT_STATUS.md`](./design/PROJECT_STATUS.md).
 
 ## The three business red lines (R1 / R2 / R3)
 
