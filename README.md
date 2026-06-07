@@ -68,28 +68,59 @@ npm run seed
 cd ..
 ```
 
-### Day-to-day development
+## Run commands (dev / preview / production)
+
+Prerequisite for all modes: MongoDB running (replica set — see `server/DB_SETUP.md`) and
+`server/.env` configured. Run `npm run seed` once to load demo data.
+
+### 1. Development (hot reload, HMR — daily coding)
 
 ```bash
-npm run dev          # client + server together (client proxies /api → server)
-# or individually:
-npm run dev:client   # http://localhost:5173  (Vite dev, no service worker, HMR)
-npm run dev:server   # http://localhost:3001
+npm run dev            # ⭐ client + server together (client proxies /api → server)
+
+# or run each individually:
+npm run dev:client     # http://localhost:5173   Vite dev — HMR, NO service worker
+npm run dev:server     # http://localhost:3001   tsx watch — auto-restart on change
 ```
 
-Health check: `curl http://localhost:3001/api/health` → `{ "status": "ok" }`
+- Frontend: http://localhost:5173 · Backend: http://localhost:3001
+- **No service worker in dev** (it would fight HMR's caching), so PWA install / offline / push
+  do **not** work here — use Preview mode for those.
+- Health check: `curl http://localhost:3001/api/health` → `{ "status": "ok" }`
 
-### Testing the PWA (install button / offline / cache)
+### 2. Preview (PWA test mode — service worker ON)
 
-Dev mode ships **no service worker** (it would fight HMR's caching), so PWA features must run from a
-production build:
+Use this to test installability, offline caching, and push notifications (anything needing the SW).
 
 ```bash
-cd client && npm run preview:pwa   # build, then vite preview → http://localhost:4173
+# Terminal 1 — backend (built or dev, either works):
+npm run dev:server                  # http://localhost:3001
+
+# Terminal 2 — built client served by Vite preview:
+cd client && npm run preview:pwa    # build + vite preview → http://localhost:4173
 ```
 
-> The install prompt requires localhost or HTTPS. A phone on the LAN over plain http won't fire
-> `beforeinstallprompt`; use an HTTPS tunnel for that.
+- Open http://localhost:4173 — this build **has the service worker** (Workbox), so install/offline/push work.
+- No HMR here (it's a production build). Rebuild to see code changes.
+- The install prompt needs localhost or HTTPS; a phone on plain-http LAN won't fire `beforeinstallprompt`
+  (use an HTTPS tunnel for on-device testing).
+
+### 3. Production (build + serve)
+
+```bash
+npm run build          # builds client (client/dist) AND compiles server (server/dist)
+
+# Run the backend in production:
+cd server && NODE_ENV=production npm start    # node dist/index.js → http://localhost:3001
+```
+
+- `server/dist` is the compiled API; run it with real env vars (`MONGODB_URI` pointing at Atlas,
+  a strong `JWT_SECRET`, VAPID keys, Google OAuth creds).
+- `client/dist` is static files — serve them with any static host / CDN (or `cd client && npm run preview`).
+  Integrated hosting (Express serving `client/dist`) is not wired up yet (see PROJECT_STATUS backlog).
+
+> Windows / PowerShell note: `NODE_ENV=production npm start` is bash syntax. In PowerShell use:
+> `$env:NODE_ENV='production'; npm start`.
 
 ### Tests
 
