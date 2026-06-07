@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { onApiAuthError } from '../lib/api'
 import {
   clearStaffSession,
   loadStaffSession,
@@ -17,6 +18,17 @@ export function StaffAuthProvider({ children }: { children: ReactNode }) {
       setReady(true)
     })
   }, [])
+
+  // Auto-logout on an invalid staff session (401 on a staff/manager request).
+  useEffect(
+    () =>
+      onApiAuthError((path) => {
+        if (path.startsWith('/api/staff') || path.startsWith('/api/manager')) {
+          void clearStaffSession().then(() => setSession(null))
+        }
+      }),
+    [],
+  )
 
   const value: StaffAuthState = {
     session,

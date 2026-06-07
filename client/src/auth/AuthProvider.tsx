@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
+import { onApiAuthError } from '../lib/api'
 import { clearSession, loadSession, saveSession, type Session } from '../session/storage'
 import { AuthContext, type AuthState } from './auth-context'
 
@@ -14,6 +15,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setReady(true)
     })
   }, [])
+
+  // Auto-logout when a customer request reports the session is invalid (401, or a stale-token 404
+  // on /api/me). Clearing the session makes RequireAuth redirect to /login. Self-cleans old tokens.
+  useEffect(
+    () =>
+      onApiAuthError((path) => {
+        if (path.startsWith('/api/me')) {
+          void clearSession().then(() => setSession(null))
+        }
+      }),
+    [],
+  )
 
   async function authRequest(path: 'login' | 'register', body: unknown): Promise<void> {
     const res = await fetch(`${API}/${path}`, {
