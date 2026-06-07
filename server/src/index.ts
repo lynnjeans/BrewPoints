@@ -7,6 +7,8 @@ import { authenticate, requireManager, requireRole } from './auth/middleware.js'
 import { staffRouter } from './staff/routes.js'
 import { customerRouter } from './customer/routes.js'
 import { managerRouter } from './manager/routes.js'
+import { pushPublicRouter, pushRouter } from './push/routes.js'
+import { initPush } from './push/service.js'
 
 const app = express()
 
@@ -29,9 +31,14 @@ app.use('/api/me', authenticate, requireRole('customer'), customerRouter)
 // Manager-only read-only store overview (PDR 5.3).
 app.use('/api/manager', authenticate, requireManager, managerRouter)
 
+// Web Push (Task 05). Public key is open; subscribe/test are customer-scoped.
+app.use('/api/push', pushPublicRouter)
+app.use('/api/me/push', authenticate, requireRole('customer'), pushRouter)
+
 // Connect to MongoDB before accepting traffic — fail fast if the DB is unreachable.
 connectDb(config.mongoUri)
   .then(() => {
+    initPush() // configure Web Push from VAPID env (no-op + warning if unset)
     app.listen(config.port, () => {
       console.info(`BrewPoints server listening on http://localhost:${config.port}`)
     })

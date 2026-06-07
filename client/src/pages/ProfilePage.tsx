@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AppShell } from '../components/AppShell'
 import { InstallButton } from '../components/InstallButton'
+import { NotificationToggle } from '../components/NotificationToggle'
 import { useAuth } from '../auth/auth-context'
 import { apiGet } from '../lib/api'
 
@@ -72,6 +73,8 @@ export function ProfilePage() {
           </li>
         ))}
       </ul>
+
+      <NotificationToggle token={session.token} />
 
       <InstallButton />
 

@@ -1,8 +1,17 @@
 import { Router } from 'express'
+import { config } from '../config.js'
 import { getStaffById } from '../auth/service.js'
 import { verifyScan } from '../qr/verify.js'
 import { earnStamps, StampError } from '../loyalty/stamps.js'
 import { redeemReward } from '../loyalty/redeem.js'
+import { sendToCustomer } from '../push/service.js'
+
+// Fire-and-forget push notification. Never blocks or fails the staff response (best-effort).
+function notify(customerId: number, title: string, body: string): void {
+  void sendToCustomer(customerId, { title, body, url: '/' }).catch(() => {
+    /* push errors are swallowed in the service; this guards the unawaited promise */
+  })
+}
 
 // Mounted at /api/staff behind authenticate + requireRole('staff') (see index.ts),
 // so every route here is staff-only. Task 4.1/4.3 (earn/redeem) will live under this guard too.
@@ -55,6 +64,15 @@ staffRouter.post('/earn', async (req, res) => {
     }
     const key = typeof idempotencyKey === 'string' ? idempotencyKey : undefined
     const result = await earnStamps(membershipId, req.auth!.sub, stamps, key)
+    const goal = config.stampsForFreeCoffee
+    const remaining = goal - result.stampBalance
+    notify(
+      result.customerId,
+      `+${String(result.earned)} stamp${result.earned === 1 ? '' : 's'} added`,
+      remaining > 0
+        ? `You're at ${String(result.stampBalance)} of ${String(goal)} — ${String(remaining)} to go till the next one's on us.`
+        : `That's ${String(goal)} of ${String(goal)} — your next coffee's on us!`,
+    )
     res.json(result)
   } catch (err) {
     if (err instanceof StampError) {
@@ -76,6 +94,7 @@ staffRouter.post('/redeem', async (req, res) => {
       return
     }
     const result = await redeemReward(membershipId, req.auth!.sub)
+    notify(result.customerId, "Cheers — coffee's on the house", 'Your free coffee has been redeemed. Enjoy!')
     res.json(result)
   } catch (err) {
     if (err instanceof StampError) {

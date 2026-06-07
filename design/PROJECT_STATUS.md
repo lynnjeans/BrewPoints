@@ -89,8 +89,8 @@
 
 | 项 | 说明 | 阻塞 |
 |---|---|---|
-| **Git 初始化** | 项目目前**零提交**,强烈建议先初始化(`.env` 已 gitignore) | 部署前置 |
-| **Web 推送通知** | 需新增 subscriptions 订阅表 = **数据库改动,须先批准**;可替代咖啡卡的 4 秒轮询 | 待批准 schema |
+| ~~**Git 初始化**~~ | ✅ 已 init 并推送到 github.com/lynnjeans/BrewPoints(main) | — |
+| ~~**Web 推送通知**~~ | ✅ 已实现(Task 05):VAPID + `PushSubscription` 集合 + 订阅/退订/测试接口 + SW 推送处理 + Profile 开关;加章/兑换自动推送。见 `server/PUSH.md` | — |
 | **部署改造** | Express 托管前端构建 + SPA fallback + 生产脚本 + Dockerfile + DEPLOY.md → DigitalOcean | — |
 | **宽屏/桌面布局** | 手机端已 OK;桌面响应式由产品方"再想想",暂缓 | 待决策 |
 | **html5-qrcode 代码分割** | 把扫码库从主包拆出(约 630KiB),优化首屏 | — |

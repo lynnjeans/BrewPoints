@@ -14,6 +14,8 @@ export default defineConfig({
       workbox: {
         // App shell precache (Cache First) — offline cold start (Task 7.1).
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
+        // Pull in the Web Push event handlers (Task 05) — runs in the SW scope.
+        importScripts: ['/push-sw.js'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
